@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cancle">
+
+	<resultMap type="cancleModel" id="cancleRes">
+		<result property="cancle_no" column="cancle_no"/>
+		<result property="reserv_no" column="reserv_no"/>
+		<result property="member_id" column="member_id"/>
+		<result property="cancle_reason" column="cancle_reason"/>
+		<result property="cancle_price" column="cancle_price"/>
+		<result property="cancle_date" column="cancle_date"/>
+		<result property="cancle_status" column="cancle_status"/>
+		
+		<result property="room_no" column="room_no"/>
+		<result property="reserv_checkin" column="reserv_checkin"/>
+		<result property="reserv_checkout" column="reserv_checkout"/>
+		<result property="reserv_price" column="reserv_price"/>
+		<result property="reserv_status" column="reserv_status"/>
+		<result property="reserv_paychk" column="reserv_paychk"/>
+		<result property="reserv_people" column="reserv_people"/>
+		<result property="reserv_date" column="reserv_date" />
+		<result property="reserv_memo" column="reserv_memo" />
+		
+		<result property="member_no" column="member_no" />
+		<result property="member_pw" column="member_pw" />
+		<result property="member_name" column="member_name" />
+		<result property="member_jumin1" column="member_jumin1" />
+		<result property="member_email" column="member_email" />
+		<result property="member_phone" column="member_phone" />
+		<result property="member_zipcode" column="member_zipcode" />
+		<result property="member_addr1" column="member_addr1" />
+		<result property="member_addr2" column="member_addr2" />
+		<result property="member_join_date" column="member_join_date" />
+		<result property="member_status" column="member_status"/>
+		
+		<result property="room_price" column="room_price"/>
+		<result property="room_people" column="room_people"/>
+		<result property="room_max_people" column="room_max_people"/>
+		<result property="room_status" column="room_status"/>
+		<result property="room_name" column="room_name"/>
+	</resultMap>
+	
+	
+	<!-- 예약 취소신청 -->
+	<insert id="insertCancle" parameterType="cancleModel">
+		INSERT
+		  INTO YOLO_CANCLE (
+		  					  CANCLE_NO
+		  					, RESERV_NO
+		  					, MEMBER_ID
+		  					, CANCLE_REASON
+		  					, CANCLE_PRICE
+		  					, CANCLE_DATE
+		  					, CANCLE_STATUS
+		  					)
+				    VALUES (
+				    		  YOLO_CANCLE_NO_SEQ.NEXTVAL
+				    		, #{reserv_no}
+				    		, #{member_id}
+				    		, #{cancle_reason}
+				    		, #{cancle_price}
+				    		, SYSDATE
+				    		, 0
+				    		)
+	</insert>
+	
+	<!-- 예약 취소 리스트(회원) -->
+	<select id="cancleList" parameterType="String" resultMap="cancleRes">
+		SELECT *
+		  FROM YOLO_CANCLE c, YOLO_RESERV s, YOLO_ROOM r, YOLO_MEMBER m
+		 WHERE c.RESERV_NO = s.RESERV_NO
+		   AND c.MEMBER_ID = m.MEMBER_ID
+		   AND s.ROOM_NO = r.ROOM_NO
+		   AND c.MEMBER_ID = #{member_id}
+	</select>
+	
+	<!-- 예약취소 뷰 -->
+	<select id="seleceCancle" parameterType="Integer" resultMap="cancleRes">
+		SELECT *
+		  FROM YOLO_CANCLE c, YOLO_RESERV s, YOLO_ROOM r, YOLO_MEMBER m
+		 WHERE c.RESERV_NO = s.RESERV_NO
+		   AND c.MEMBER_ID = m.MEMBER_ID
+		   AND s.ROOM_NO = r.ROOM_NO
+		   AND c.CANCLE_NO = #{cancle_no}
+	</select>
+	
+	<!-- <관리자>예약 취소 리스트 -->
+	<select id="adcancleList" resultMap="cancleRes">
+		SELECT *
+		  FROM YOLO_CANCLE c, YOLO_RESERV s, YOLO_ROOM r, YOLO_MEMBER m
+		 WHERE c.RESERV_NO = s.RESERV_NO
+		   AND c.MEMBER_ID = m.MEMBER_ID
+		   AND s.ROOM_NO = r.ROOM_NO
+	</select>
+	
+	<!-- <관리자>취소 신청 상태 변경 -->
+	<update id="cancleStatusModify" parameterType="cancleModel">
+		UPDATE YOLO_CANCLE
+		   SET CANCLE_STATUS = #{cancle_status}
+		 WHERE CANCLE_NO = #{cancle_no}
+	</update>
+
+</mapper>

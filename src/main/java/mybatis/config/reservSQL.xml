@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reserv">
+
+	<resultMap type="reservModel" id="reservRes">
+		<result property="reserv_no" column="reserv_no"/>
+		<result property="member_id" column="member_id"/>
+		<result property="room_no" column="room_no"/>
+		<result property="reserv_checkin" column="reserv_checkin"/>
+		<result property="reserv_checkout" column="reserv_checkout"/>
+		<result property="reserv_price" column="reserv_price"/>
+		<result property="reserv_status" column="reserv_status"/>
+		<result property="reserv_paychk" column="reserv_paychk"/>
+		<result property="reserv_people" column="reserv_people"/>
+		<result property="reserv_date" column="reserv_date" />
+		<result property="reserv_memo" column="reserv_memo" />
+		
+		<result property="member_no" column="member_no" />
+		<result property="member_pw" column="member_pw" />
+		<result property="member_name" column="member_name" />
+		<result property="member_jumin1" column="member_jumin1" />
+		<result property="member_email" column="member_email" />
+		<result property="member_phone" column="member_phone" />
+		<result property="member_zipcode" column="member_zipcode" />
+		<result property="member_addr1" column="member_addr1" />
+		<result property="member_addr2" column="member_addr2" />
+		<result property="member_join_date" column="member_join_date" />
+		<result property="member_status" column="member_status"/>
+		
+		<result property="room_price" column="room_price"/>
+		<result property="room_people" column="room_people"/>
+		<result property="room_max_people" column="room_max_people"/>
+		<result property="room_status" column="room_status"/>
+		<result property="room_name" column="room_name"/>
+	</resultMap>
+	
+	<insert id="insertReserv" parameterType="reservModel">
+		INSERT
+		  INTO YOLO_RESERV (
+		  					  RESERV_NO
+		  					, MEMBER_ID
+		  					, ROOM_NO
+		  					, RESERV_CHECKIN
+		  					, RESERV_CHECKOUT
+		  					, RESERV_PRICE
+		  					, RESERV_PEOPLE
+		  					, RESERV_DATE
+		  					, RESERV_MEMO
+		  					)
+		 			 VALUES (
+		 			 		  YOLO_RESERV_NO_SEQ.NEXTVAL
+		 			 		, #{member_id}
+		 			 		, #{room_no}
+		 			 		, #{reserv_checkin}
+		 			 		, #{reserv_checkout}
+		 			 		, #{reserv_price}
+		 			 		, #{reserv_people}
+		 			 		, SYSDATE
+		 			 		, #{reserv_memo}
+		 			 		)
+	</insert>
+	
+	<!-- 가장 최신 예약 내역 보여주기 -->
+	<select id="selectRecentReserv" parameterType="String" resultMap="reservRes">
+		<![CDATA[
+		SELECT *
+		  FROM (
+		  		SELECT    s.RESERV_NO
+		  				, s.MEMBER_ID
+		  				, s.ROOM_NO
+		  				, s.RESERV_CHECKIN
+		  				, s.RESERV_CHECKOUT
+		  				, s.RESERV_PRICE
+		  				, s.RESERV_PEOPLE
+		  				, s.RESERV_DATE
+		  				, s.RESERV_STATUS
+		  				, s.RESERV_PAYCHK
+		  				, r.ROOM_NAME
+		  				, u.MEMBER_NAME
+		  				, ROWNUM n
+		  		  FROM YOLO_RESERV s, YOLO_ROOM r, YOLO_MEMBER u
+		  		 WHERE s.ROOM_NO = r.ROOM_NO
+		  		   AND s.MEMBER_ID = u.MEMBER_ID
+		  		   AND s.MEMBER_ID = #{member_id}
+		  		 ORDER BY RESERV_DATE DESC
+		  		)
+		 WHERE n >= 0
+		   AND n <= 1 
+		]]>
+	</select>
+	
+	<!-- 모든 예약 내역 보여주기 / <관리자>예약 리스트 보여주기 -->
+	<select id="reservList" parameterType="String" resultMap="reservRes">
+		SELECT s.RESERV_NO
+		  	 , s.MEMBER_ID
+		  	 , s.ROOM_NO
+		  	 , s.RESERV_CHECKIN
+		  	 , s.RESERV_CHECKOUT
+		  	 , s.RESERV_PRICE
+		  	 , s.RESERV_PEOPLE
+		  	 , s.RESERV_DATE
+		  	 , s.RESERV_STATUS
+		  	 , s.RESERV_PAYCHK
+		  	 , r.ROOM_NAME
+		  	 , u.MEMBER_NAME
+		  FROM 	YOLO_RESERV s,
+		  		YOLO_MEMBER u,
+		  		YOLO_ROOM r
+		 WHERE 	s.MEMBER_ID = u.MEMBER_ID
+		   AND 	s.ROOM_NO = r.ROOM_NO
+		   AND 	s.MEMBER_ID = #{member_id}
+		 ORDER BY s.RESERV_NO DESC
+	</select>
+	
+	<!-- <관리자>예약 리스트 보여주기 -->
+	<select id="adReservList" resultMap="reservRes">
+		SELECT *
+		  FROM 	YOLO_RESERV r,
+		  		YOLO_MEMBER u,
+		  		YOLO_ROOM m
+		 WHERE 	r.MEMBER_ID = u.MEMBER_ID
+		   AND 	r.ROOM_NO = m.ROOM_NO
+		 ORDER BY r.RESERV_NO DESC
+	</select>
+	
+	<!-- 예약정보 하나 보여주기 / <관리자>예약정보 상세 확인 -->
+	<select id="reservView" parameterType="Integer" resultMap="reservRes">
+		SELECT *
+		  FROM 	YOLO_RESERV r,
+		  		YOLO_MEMBER u,
+		  		YOLO_ROOM m
+		 WHERE r.MEMBER_ID = u.MEMBER_ID
+		   AND r.ROOM_NO = m.ROOM_NO
+		   AND r.RESERV_NO = #{reserv_no}
+	</select>
+	
+	<!-- 예약정보 변경 -->
+	<update id="reservModify" parameterType="reservModel">
+		UPDATE 	YOLO_RESERV
+		   SET 	ROOM_NO = #{room_no},
+		   		RESERV_CHECKIN = #{reserv_checkin},
+		   		RESERV_CHECKOUT = #{reserv_checkout},
+		   		RESERV_PRICE = #{reserv_price},
+		   		RESERV_PEOPLE = #{reserv_people}
+		 WHERE 	RESERV_NO = #{reserv_no}
+	</update>
+	
+	<!-- 예약 취소 신청(회원)-->
+	<update id="reservDelete" parameterType="Integer">
+		UPDATE YOLO_RESERV
+		   SET RESERV_STATUS = 2
+		 WHERE RESERV_NO = #{reserv_no}
+	</update>
+	
+	<!-- <관리자>입금확인 -->
+	<update id="reservPayCheck" parameterType="Integer">
+		UPDATE YOLO_RESERV
+		   SET RESERV_PAYCHK = 1
+		 WHERE RESERV_NO = #{reserv_no}
+	</update>
+	
+	<!-- <관리자> 예약 상태 변경 -->
+	<update id="reservStatusModify" parameterType="reservModel">
+		UPDATE YOLO_RESERV
+		   SET RESERV_STATUS = #{reserv_status}
+		 WHERE RESERV_NO = #{reserv_no}
+	</update>
+
+</mapper>

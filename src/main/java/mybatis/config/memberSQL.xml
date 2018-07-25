@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+
+	<resultMap type="memberModel" id="memberRes">
+		<result property="member_no" column="member_no" />
+		<result property="member_id" column="member_id" />
+		<result property="member_pw" column="member_pw" />
+		<result property="member_name" column="member_name" />
+		<result property="member_jumin1" column="member_jumin1" />
+		<result property="member_email" column="member_email" />
+		<result property="member_phone" column="member_phone" />
+		<result property="member_zipcode" column="member_zipcode" />
+		<result property="member_addr1" column="member_addr1" />
+		<result property="member_addr2" column="member_addr2" />
+		<result property="member_join_date" column="member_join_date" />
+		<result property="member_status" column="member_status"/>
+	</resultMap>
+	
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="memberModel">
+		INSERT 
+		  INTO YOLO_MEMBER
+		  (
+		  	MEMBER_NO
+		  , MEMBER_ID
+		  , MEMBER_PW
+		  , MEMBER_NAME
+		  , MEMBER_JUMIN1
+		  , MEMBER_EMAIL
+		  , MEMBER_PHONE
+		  , MEMBER_ZIPCODE
+		  , MEMBER_ADDR1
+		  , MEMBER_ADDR2
+		  , MEMBER_JOIN_DATE)
+		 VALUES
+		  (
+		  	YOLO_MEMBER_NO_SEQ.NEXTVAL
+		  , #{member_id}
+		  , #{member_pw}
+		  , #{member_name}
+		  , #{member_jumin1}
+		  , #{member_email}
+		  , #{member_phone}
+		  , #{member_zipcode}
+		  , #{member_addr1}
+		  , #{member_addr2}
+		  , SYSDATE)
+	</insert>
+	
+	<!-- 아이디 중복 확인 -->
+	<select id="idCheck" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_ID = #{member_id}
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="findId" parameterType="memberModel" resultType="String">
+		SELECT MEMBER_ID
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_NAME	= #{member_name}
+		   AND MEMBER_EMAIL = #{member_email}
+		   AND MEMBER_STATUS		= 1
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="findPw" parameterType="memberModel" resultType="String">
+		SELECT MEMBER_PW
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_ID	= #{member_id}
+		   AND MEMBER_NAME	= #{member_name}
+		   AND MEMBER_EMAIL = #{member_email}
+		   AND MEMBER_STATUS		= 1
+	</select>
+
+	<!-- 로그인 -->
+	<select id="login" parameterType="memberModel" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_ID	= #{member_id}
+		   AND MEMBER_PW	= #{member_pw}
+		   AND MEMBER_STATUS		= 1
+	</select>
+	
+	<!-- 회원정보 하나 가져오기 / <관리자>회원 정보 상세보기 -->
+	<select id="memberInfo" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_ID	= #{member_id}
+	</select>
+	
+	<!-- 회원정보 수정 / <관리자>회원 정보 수정 -->
+	<update id="memberModify" parameterType="memberModel">
+		UPDATE YOLO_MEMBER
+		   SET MEMBER_NAME		= #{member_name}
+		   	 , MEMBER_JUMIN1	= #{member_jumin1}
+		   	 , MEMBER_PHONE		= #{member_phone}
+		   	 , MEMBER_EMAIL		= #{member_email}
+		   	 , MEMBER_ZIPCODE	= #{member_zipcode}
+		   	 , MEMBER_ADDR1		= #{member_addr1}
+		   	 , MEMBER_ADDR2		= #{member_addr2}
+		   	 , MEMBER_RATE		= #{member_rate}
+		 WHERE MEMBER_ID		= #{member_id}
+	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="pwModify" parameterType="memberModel">
+		UPDATE YOLO_MEMBER
+		   SET MEMBER_PW		= #{member_pw}
+		 WHERE MEMBER_ID		= #{member_id}
+	</update>
+	
+	<!-- 회원 탈퇴 / <관리자>회원정보 삭제 -->
+	<update id="deleteMember" parameterType="memberModel">
+		UPDATE YOLO_MEMBER
+		   SET MEMBER_STATUS		= 0
+		 WHERE MEMBER_ID	= #{member_id}
+		<if test="member_pw != null">
+		   AND MEMBER_PW	= #{member_pw}
+		</if>
+	</update>
+	
+	<!-- <관리자>회원 리스트 -->
+	<select id="memberList" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 ORDER BY MEMBER_NO DESC
+	</select>
+	
+	<!-- <관리자>이름으로 회원검색 -->
+	<select id="searchMemberN" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_NAME
+		  LIKE #{searchKeyword}
+		 ORDER BY MEMBER_NO DESC
+	</select>
+	
+	<!-- <관리자>아이디로 회원검색 -->
+	<select id="searchMemberI" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_ID
+		  LIKE #{searchKeyword}
+		 ORDER BY MEMBER_NO DESC
+	</select>
+	
+	<!-- <관리자>전화번호로 회원검색 -->
+	<select id="searchMemberP" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_PHONE
+		  LIKE #{searchKeyword}
+		 ORDER BY MEMBER_NO DESC
+	</select>
+	
+	<!-- <관리자>이메일로 회원검색 -->
+	<select id="searchMemberE" parameterType="String" resultMap="memberRes">
+		SELECT *
+		  FROM YOLO_MEMBER
+		 WHERE MEMBER_EMAIL
+		  LIKE #{searchKeyword}
+		 ORDER BY MEMBER_NO DESC
+	</select>
+	
+</mapper>

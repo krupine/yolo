@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="room">
+
+	<resultMap type="roomModel" id="roomRes">
+		<result property="room_no" column="room_no"/>
+		<result property="room_price" column="room_price"/>
+		<result property="room_people" column="room_people"/>
+		<result property="room_max_people" column="room_max_people"/>
+		<result property="room_status" column="room_status"/>
+		<result property="room_name" column="room_name"/>
+	</resultMap>
+	
+	<!-- 객실추가 -->
+	<insert id="insertRoom" parameterType="roomModel">
+		INSERT
+		  INTO YOLO_ROOM (
+		  					ROOM_NO
+		  				  , ROOM_PRICE
+		  				  , ROOM_PEOPLE
+		  				  , ROOM_MAX_PEOPLE
+		  				  , ROOM_STATUS
+		  				  , ROOM_NAME
+		  				 )
+		  		  VALUES (
+		  		  			YOLO_ROOM_NO_SEQ.NEXTVAL
+		  		  		  , #{room_price}
+		  		  		  , #{room_people}
+		  		  		  , #{room_max_people}
+		  		  		  , 1
+		  		  		  , #{room_name}
+		  		  		 )
+	</insert>
+	
+	<!-- 객실 리스트(삭제 객실 미노출) -->
+	<select id="roomList" resultMap="roomRes">
+		SELECT *
+		  FROM YOLO_ROOM
+		 WHERE ROOM_STATUS = 1
+		 ORDER BY ROOM_NO DESC
+	</select>
+	
+	<!-- 객실 리스트 -->
+	<select id="adRoomList" resultMap="roomRes">
+		SELECT *
+		  FROM YOLO_ROOM
+		 ORDER BY ROOM_NO DESC
+	</select>
+	
+	<!-- 방 번호로 방 선택 -->
+	<select id="selectRoom" parameterType="Integer" resultMap="roomRes">
+		SELECT *
+		  FROM YOLO_ROOM
+		 WHERE ROOM_NO = #{room_no}
+	</select>
+	
+	<!-- 객실 정보 수정 -->
+	<update id="roomModify" parameterType="roomModel">
+		UPDATE YOLO_ROOM
+		   SET ROOM_PRICE = #{room_price}
+		   	 , ROOM_PEOPLE = #{room_people}
+		   	 , ROOM_MAX_PEOPLE = #{room_max_people}
+		   	 , ROOM_NAME = #{room_name}
+		 WHERE ROOM_NO = ${room_no}
+	</update>
+	
+	<!-- 객실 삭제 -->
+	<update id="deleteRoom" parameterType="Integer">
+		UPDATE YOLO_ROOM
+		   SET ROOM_STATUS = 0
+		 WHERE ROOM_NO = ${room_no}
+	</update>
+	
+	<!-- 가장 최근 등록된 객실 정보 가져오기 -->
+	<select id="selectRecentRoom" resultMap="roomRes">
+		<![CDATA[ 
+		select * from (select room_no, room_price, room_people, room_max_people, room_status, room_name, rownum r from 
+		(select * from yolo_room order by room_no desc)) where r = 1 ]]>
+	</select>
+
+</mapper>

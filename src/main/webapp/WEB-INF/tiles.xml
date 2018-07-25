@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+
+	<definition name="default" template = "/WEB-INF/views/layout/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layout/header.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/layout/body.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+	</definition>
+
+	<definition name="main" template = "/WEB-INF/views/layout/layout.jsp">
+		<put-attribute name="header" value="/WEB-INF/views/layout/header.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/layout/body.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layout/footer.jsp" />
+	</definition>
+	
+	<definition name="admin" template = "/WEB-INF/views/layout/adminLayout/adLayout.jsp">
+		<put-attribute name="title" value="관리자 페이지"/>
+		<put-attribute name="header" value="/WEB-INF/views/layout/adminLayout/adHeader.jsp" />
+		<put-attribute name="lefter" value="/WEB-INF/views/layout/adminLayout/adLefter.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/layout/adminLayout/adBody.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/views/layout/adminLayout/adFooter.jsp" />
+		
+	</definition>
+	
+	<!-- 회원가입 -->
+	<definition name="joinForm" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/joinForm.jsp" />
+	</definition>
+	
+	<!-- 로그인 시 아이디/비밀번호 일치 체크 -->
+	<definition name="loginError" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/loginCheck.jsp" />
+	</definition>
+	
+	<!-- 아이디 찾기 폼 -->
+	<definition name="findIdForm" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/findIdForm.jsp" />
+	</definition>
+
+	<!-- 비밀번호 찾기 폼 -->
+	<definition name="findPwForm" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/findPwdForm.jsp" />
+	</definition>
+	
+	<!-- 마이페이지 -->
+	<definition name="myPage" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/myPage.jsp" />
+	</definition>
+	
+	<!-- 내 예약내역 -->
+	<definition name="myReservList" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/myReservList.jsp" />
+	</definition>
+	
+	<!-- 개인정보 확인 및 수정 -->
+	<definition name="infoModify" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/myInfo.jsp" />
+	</definition>
+	
+	<!-- 회원탈퇴 -->
+	<definition name="signOutForm" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/member/signOut.jsp" />
+	</definition>
+	
+	<!-- 객실보기 -->
+	<definition name="roomView" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/main/roomView.jsp" />
+	</definition>
+	
+	<!-- 예약 현황 -->
+	<definition name="calendar" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/reservation/calendar.jsp" />
+	</definition>
+	
+	<!-- 실시간 예약 -->
+	<definition name="resStep1" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/reservation/resStep1.jsp" />
+	</definition>
+	
+	<definition name="resStep2" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/reservation/resStep2.jsp" />
+	</definition>
+	
+	<definition name="resStep3" extends="main">
+		<put-attribute name="body" value="/WEB-INF/views/reservation/resStep3.jsp" />
+	</definition>
+	
+	<!-- <관리자> 회원관리 -->
+	<definition name="adMemberList" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adMemberList.jsp" />
+	</definition>
+	
+	<definition name="adMemberView" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adMemberView.jsp" />
+	</definition>
+	
+	<definition name="adMemberModify" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adMemberModify.jsp" />
+	</definition>
+	
+	<!-- <관리자> 객실관리 -->
+	<definition name="adRoomList" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adRoomList.jsp" />
+	</definition>
+	
+	<definition name="adRoomView" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adRoomView.jsp" />
+	</definition>
+	
+	<definition name="insertRoom" extends="admin">
+		<put-attribute name="body" value="/WEB-INF/views/admin/adRoomInsert.jsp" />
+	</definition>
+</tiles-definitions>

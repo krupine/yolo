@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="roomFile">
+
+	<resultMap type="roomFileModel" id="roomFileRes">
+		<result property="file_no" column="file_no"/>
+		<result property="file_org_imgname" column="file_org_imgname"/>
+		<result property="file_sav_imgname" column="file_sav_imgname"/>
+		<result property="file_size" column="file_size"/>
+		<result property="room_no" column="room_no"/>
+	</resultMap>
+	
+	<insert id="uploadFile" parameterType="roomFileModel">
+		INSERT
+		  INTO YOLO_ROOM_FILE (
+		  						  FILE_NO
+		  						, FILE_ORG_IMGNAME
+		  						, FILE_SAV_IMGNAME
+		  						, FILE_SIZE
+		  						, ROOM_NO)
+		  			   VALUES (
+		  			   			  YOLO_ROOM_FILE_NO_SEQ.NEXTVAL
+		  			   			, #{file_org_imgname}
+		  			   			, #{file_sav_imgname}
+		  			   			, #{file_size}
+		  			   			, #{room_no}
+		  			   			)
+	</insert>
+	
+	<select id="fileSelect" parameterType="Integer" resultMap="roomFileRes">
+		SELECT *
+		  FROM YOLO_ROOM_FILE
+		 WHERE ROOM_NO = #{room_no}
+	</select>
+	
+	<select id="files" parameterType="Integer" resultMap="roomFileRes">
+		SELECT *
+		  FROM YOLO_ROOM_FILE
+		 WHERE FILE_NO = #{file_no}
+	</select>
+	
+	<delete id="fileDelete" parameterType="Integer">
+		DELETE
+		  FROM YOLO_ROOM_FILE
+		 WHERE ROOM_NO = #{room_no}
+	</delete>
+
+</mapper>
